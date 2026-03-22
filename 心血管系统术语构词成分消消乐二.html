@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心血管系统术语构词成分消消乐二</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F5F5DC;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #8B4513;
+            font-size: 2.5rem;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        #game-container {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            perspective: 1000px;
+        }
+
+        .bubble {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 
+                inset -10px -10px 20px rgba(0,0,0,0.3),
+                inset 10px 10px 20px rgba(255,255,255,0.4),
+                5px 5px 15px rgba(0,0,0,0.3),
+                0 0 0 2px rgba(255,255,255,0.2);
+            transform-style: preserve-3d;
+            user-select: none;
+            padding: 10px;
+            line-height: 1.2;
+        }
+
+        .bubble::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 30%;
+            height: 20%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .bubble:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        .bubble.selected {
+            transform: scale(1.1);
+            box-shadow: 
+                inset -10px -10px 20px rgba(0,0,0,0.3),
+                inset 10px 10px 20px rgba(255,255,255,0.4),
+                0 0 30px rgba(255,255,255,0.8),
+                0 0 0 4px #FFD700;
+        }
+
+        .bubble.matched {
+            animation: pop 0.5s ease-out forwards;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.5; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .bubble.shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        /* 不同颜色的泡泡 */
+        .color-1 { background: linear-gradient(135deg, #FF6B6B, #EE5A24); }
+        .color-2 { background: linear-gradient(135deg, #4ECDC4, #44A3AA); }
+        .color-3 { background: linear-gradient(135deg, #45B7D1, #3498DB); }
+        .color-4 { background: linear-gradient(135deg, #96CEB4, #7CB342); }
+        .color-5 { background: linear-gradient(135deg, #FFEAA7, #FDCB6E); }
+        .color-6 { background: linear-gradient(135deg, #DDA0DD, #BA55D3); }
+        .color-7 { background: linear-gradient(135deg, #98D8C8, #7FCDCD); }
+        .color-8 { background: linear-gradient(135deg, #F7DC6F, #F4D03F); }
+        .color-9 { background: linear-gradient(135deg, #BB8FCE, #9B59B6); }
+        .color-10 { background: linear-gradient(135deg, #85C1E9, #5DADE2); }
+        .color-11 { background: linear-gradient(135deg, #F8C471, #E67E22); }
+        .color-12 { background: linear-gradient(135deg, #82E0AA, #58D68D); }
+        .color-13 { background: linear-gradient(135deg, #F1948A, #EC7063); }
+        .color-14 { background: linear-gradient(135deg, #85C1E9, #3498DB); }
+        .color-15 { background: linear-gradient(135deg, #F9E79F, #F4D03F); }
+        .color-16 { background: linear-gradient(135deg, #D7BDE2, #AF7AC5); }
+        .color-17 { background: linear-gradient(135deg, #A9DFBF, #52BE80); }
+        .color-18 { background: linear-gradient(135deg, #F5B7B1, #E74C3C); }
+
+        #controls {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        #start-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        #start-btn:active {
+            transform: translateY(-1px);
+        }
+
+        #timer {
+            font-size: 1.8rem;
+            color: #8B4513;
+            font-weight: bold;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        #success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        #success-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #success-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #success-content p {
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        #play-again {
+            margin-top: 30px;
+            background: white;
+            color: #764ba2;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #play-again:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .hidden {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        @media (max-width: 900px) {
+            #game-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .bubble {
+                width: 100px;
+                height: 100px;
+                font-size: 0.9rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            #game-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .bubble {
+                width: 90px;
+                height: 90px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>心血管系统术语构词成分消消乐二</h1>
+    
+    <div id="game-container"></div>
+    
+    <div id="controls">
+        <button id="start-btn">开始游戏</button>
+        <div id="timer">时间: 00:00</div>
+    </div>
+
+    <div id="success-modal">
+        <div id="success-content">
+            <h2>🎉 恭喜你挑战成功！</h2>
+            <p id="final-time">完成时间: 00:00</p>
+            <button id="play-again">再玩一次</button>
+        </div>
+    </div>
+
+    <script>
+        // 游戏数据
+        const pairs = [
+            { term: 'atri/o', meaning: 'atrium' },
+            { term: 'ventricul/o', meaning: 'ventricle' },
+            { term: 'brachi/o', meaning: 'arm' },
+            { term: 'cyan/o', meaning: 'blue' },
+            { term: 'ox/y', meaning: 'oxygen' },
+            { term: 'phleb/o', meaning: 'vein' },
+            { term: 'hemat/o', meaning: 'blood' },
+            { term: 'ather/o', meaning: 'fatty plaque' },
+            { term: 'myx/o', meaning: 'mucus' },
+            { term: 'scler/o', meaning: 'hard' },
+            { term: 'sphygm/o', meaning: 'pulse' },
+            { term: 'steth/o', meaning: 'chest' },
+            { term: 'veni-', meaning: 'vein' },
+            { term: '-scope', meaning: 'instrument for examining' },
+            { term: '-centesis', meaning: 'surgical puncture' },
+            { term: '-crit', meaning: 'separation' },
+            { term: '-ia', meaning: 'condition' },
+            { term: '-lysis', meaning: 'breakdown' }
+        ];
+
+        // 音频上下文（使用Web Audio API生成音效）
+        let audioContext;
+        
+        function initAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playMatchSound() {
+            if (!audioContext) return;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+            oscillator.frequency.exponentialRampToValueAtTime(1046.5, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        function playErrorSound() {
+            if (!audioContext) return;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
+            oscillator.frequency.linearRampToValueAtTime(150, audioContext.currentTime + 0.3);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        function playSuccessSound() {
+            if (!audioContext) return;
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+            notes.forEach((freq, index) => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(freq, audioContext.currentTime + index * 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime + index * 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + index * 0.1 + 0.4);
+                
+                oscillator.start(audioContext.currentTime + index * 0.1);
+                oscillator.stop(audioContext.currentTime + index * 0.1 + 0.4);
+            });
+        }
+
+        // 游戏状态
+        let gameStarted = false;
+        let selectedBubbles = [];
+        let matchedCount = 0;
+        let startTime;
+        let timerInterval;
+        let totalPairs = pairs.length;
+
+        const gameContainer = document.getElementById('game-container');
+        const startBtn = document.getElementById('start-btn');
+        const timerDisplay = document.getElementById('timer');
+        const successModal = document.getElementById('success-modal');
+        const finalTimeDisplay = document.getElementById('final-time');
+        const playAgainBtn = document.getElementById('play-again');
+
+        function shuffle(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                timerDisplay.textContent = `时间: ${formatTime(elapsed)}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            return formatTime(elapsed);
+        }
+
+        function createBubble(item, index) {
+            const bubble = document.createElement('div');
+            bubble.className = `bubble color-${(index % 18) + 1}`;
+            bubble.textContent = item.text;
+            bubble.dataset.term = item.term;
+            bubble.dataset.meaning = item.meaning;
+            bubble.dataset.id = item.id;
+            
+            bubble.addEventListener('click', () => handleBubbleClick(bubble));
+            return bubble;
+        }
+
+        function initGame() {
+            gameContainer.innerHTML = '';
+            selectedBubbles = [];
+            matchedCount = 0;
+            gameStarted = true;
+            
+            // 创建所有泡泡项（构词成分和英文含义）
+            let bubbleItems = [];
+            pairs.forEach((pair, index) => {
+                bubbleItems.push({
+                    text: pair.term,
+                    term: pair.term,
+                    meaning: pair.meaning,
+                    id: index,
+                    type: 'term'
+                });
+                bubbleItems.push({
+                    text: pair.meaning,
+                    term: pair.term,
+                    meaning: pair.meaning,
+                    id: index,
+                    type: 'meaning'
+                });
+            });
+
+            // 打乱顺序
+            bubbleItems = shuffle(bubbleItems);
+
+            // 创建泡泡
+            bubbleItems.forEach((item, index) => {
+                const bubble = createBubble(item, index);
+                gameContainer.appendChild(bubble);
+            });
+
+            startBtn.textContent = '游戏中...';
+            startBtn.disabled = true;
+            startBtn.style.opacity = '0.6';
+            
+            timerDisplay.textContent = '时间: 00:00';
+            startTimer();
+        }
+
+        function handleBubbleClick(bubble) {
+            if (!gameStarted || bubble.classList.contains('matched') || bubble.classList.contains('selected')) {
+                return;
+            }
+
+            // 如果已经选了两个，取消之前的选择
+            if (selectedBubbles.length === 2) {
+                selectedBubbles.forEach(b => b.classList.remove('selected'));
+                selectedBubbles = [];
+            }
+
+            bubble.classList.add('selected');
+            selectedBubbles.push(bubble);
+
+            if (selectedBubbles.length === 2) {
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [bubble1, bubble2] = selectedBubbles;
+            
+            // 检查是否是相同的ID（同一对）但不同类型
+            const isMatch = bubble1.dataset.id === bubble2.dataset.id && 
+                           bubble1 !== bubble2;
+
+            if (isMatch) {
+                // 匹配成功
+                playMatchSound();
+                bubble1.classList.remove('selected');
+                bubble2.classList.remove('selected');
+                bubble1.classList.add('matched');
+                bubble2.classList.add('matched');
+                
+                matchedCount++;
+                selectedBubbles = [];
+
+                // 检查是否全部匹配
+                if (matchedCount === totalPairs) {
+                    setTimeout(() => {
+                        const finalTime = stopTimer();
+                        playSuccessSound();
+                        finalTimeDisplay.textContent = `完成时间: ${finalTime}`;
+                        successModal.style.display = 'flex';
+                    }, 500);
+                }
+            } else {
+                // 匹配失败
+                playErrorSound();
+                bubble1.classList.add('shake');
+                bubble2.classList.add('shake');
+                
+                setTimeout(() => {
+                    bubble1.classList.remove('selected', 'shake');
+                    bubble2.classList.remove('selected', 'shake');
+                    selectedBubbles = [];
+                }, 500);
+            }
+        }
+
+        function resetGame() {
+            successModal.style.display = 'none';
+            startBtn.textContent = '开始游戏';
+            startBtn.disabled = false;
+            startBtn.style.opacity = '1';
+            timerDisplay.textContent = '时间: 00:00';
+            gameContainer.innerHTML = '';
+            gameStarted = false;
+            selectedBubbles = [];
+            matchedCount = 0;
+        }
+
+        startBtn.addEventListener('click', () => {
+            initAudio();
+            initGame();
+        });
+
+        playAgainBtn.addEventListener('click', () => {
+            resetGame();
+            setTimeout(() => {
+                initAudio();
+                initGame();
+            }, 100);
+        });
+
+        // 防止空格键滚动页面
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && e.target === document.body) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
